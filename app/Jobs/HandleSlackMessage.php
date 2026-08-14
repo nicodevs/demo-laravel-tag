@@ -4,10 +4,12 @@ namespace App\Jobs;
 
 use App\Ai\Agents\SlackBot;
 use App\Models\SlackConversation;
+use App\Models\SlackMessage;
 use App\Models\SlackUser;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class HandleSlackMessage implements ShouldQueue
 {
@@ -33,11 +35,18 @@ class HandleSlackMessage implements ShouldQueue
         $mapping->conversation_id = $response->conversationId;
         $mapping->save();
 
+        foreach ([$text, $response->text] as $message) {
+            SlackMessage::create([
+                'text' => $message,
+                'embedding' => Str::of($message)->toEmbeddings(),
+            ]);
+        }
+
         Http::withToken(config('services.slack.bot_token'))
             ->post('https://slack.com/api/chat.postMessage', [
                 'channel' => $this->event['channel'],
                 'text' => $response->text,
-                'thread_ts' => $this->event['thread_ts'] ?? $this->event['ts'],
+                'thread_ts' => $thread,
             ]);
     }
 }
