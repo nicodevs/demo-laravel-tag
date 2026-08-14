@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class SlackConversation extends Model
 {
-    //
+    protected $guarded = [];
 }
