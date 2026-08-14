@@ -29,6 +29,8 @@ return [
     ],
 
     'slack' => [
+        'bot_token' => env('SLACK_BOT_TOKEN'),
+        'bot_user_id' => env('SLACK_BOT_USER_ID'),
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
